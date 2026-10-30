@@ -164,6 +164,23 @@ def test_doc_ref_not_in_history_falls_back_to_search(agent):
     assert r2.trace[0].tool == "search"  # 未采纳无效文档引用
 
 
+def test_doc_ref_without_context_asks_clarification(agent):
+    """无任何上下文时只说「按D01算」:应请求澄清,而不是误报资料外。"""
+    r = agent.run("按D01算")
+    assert r.status == "clarification_needed"
+    assert r.citations == []
+    assert r.next_question_to_user
+
+
+def test_mock_does_not_hardcode_top_k(agent_factory):
+    """--top-k 配置必须全链路生效(Mock 不得硬编码 top_k)。"""
+    a = agent_factory(top_k=1)
+    r = a.run("报销申请的期限是多久?")
+    search_obs = r.trace[0].observation
+    assert search_obs.params["top_k"] == 1
+    assert len(search_obs.data["hits"]) <= 1
+
+
 def test_engine_and_model_recorded(agent):
     r = agent.run("每个月吃饭有补贴吗?能补多少?")
     assert r.engine == "mock"

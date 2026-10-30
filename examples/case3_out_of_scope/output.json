@@ -24,8 +24,7 @@
       "thought": "先按问题主题词检索相关制度文档",
       "tool": "search",
       "params": {
-        "query": "餐厅",
-        "top_k": 4
+        "query": "餐厅"
       },
       "observation": {
         "tool": "search",
@@ -44,15 +43,14 @@
         },
         "error": null
       },
-      "next_action": "search {\"query\": \"餐厅 食堂 餐饮 吃饭\", \"top_k\": 4}"
+      "next_action": "search {\"query\": \"餐厅 食堂 餐饮 吃饭\"}"
     },
     {
       "step": 2,
       "thought": "检索无结果,使用同义词扩展改写查询后重试",
       "tool": "search",
       "params": {
-        "query": "餐厅 食堂 餐饮 吃饭",
-        "top_k": 4
+        "query": "餐厅 食堂 餐饮 吃饭"
       },
       "observation": {
         "tool": "search",

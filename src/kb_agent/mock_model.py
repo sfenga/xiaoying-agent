@@ -74,6 +74,17 @@ class MockReActModel:
                 doc_ref,
                 f"用户在追问中指定了文档 {doc_ref},直接读取原文,结合对话历史主题定位条款",
             )
+        # -- 0b. 无上下文却只引用了文档编号(如首问「按D01算」)→ 请求澄清,而非误报资料外 --
+        if not history and not raw and re.search(r"(?i)(?<![A-Za-z0-9])d\d+(?![A-Za-z0-9])", question):
+            return self._finish(
+                status="clarification_needed",
+                thought="问题只引用了文档编号而没有具体问题,请求澄清",
+                answer=None,
+                citations=[],
+                gaps=["问题未说明想了解该文档中的什么内容"],
+                next_q="请告诉我您想了解该文档中的什么问题(例如报销期限、住宿费标准等)。",
+                topics=[],
+            )
 
         last_hits: List[Dict[str, Any]] = []
         if ok_searches:
@@ -305,7 +316,8 @@ class MockReActModel:
     # 动作构造
     # ------------------------------------------------------------------ #
     def _search(self, query: str, thought: str) -> Dict[str, Any]:
-        return {"thought": thought, "tool": TOOL_SEARCH, "params": {"query": query, "top_k": 4}}
+        # top_k 不在此指定:交由工具层的默认值(来自 --top-k 配置),保证参数全链路生效
+        return {"thought": thought, "tool": TOOL_SEARCH, "params": {"query": query}}
 
     def _read(self, doc_id: str, thought: str) -> Dict[str, Any]:
         return {"thought": thought, "tool": TOOL_READ, "params": {"doc_id": doc_id}}

@@ -2,7 +2,7 @@
 
 ## 1. 测试与材料的对应关系
 
-- 可执行测试:`tests/`(109 个用例,全部离线、确定性,`python -m pytest tests/ -q` 一键运行;含检索召回评测集与真实模型协议端到端集成测试);
+- 可执行测试:`tests/`(113 个用例,全部离线、确定性,`python -m pytest tests/ -q` 一键运行;含检索召回评测集与真实模型协议端到端集成测试);
 - 运行记录:`examples/case1..case7/`(每组含 `input.json` 输入、`output.json` 实际输出、`trace.md` 人类可读 Trace);
 - 下表"实际结果"列均为本仓库提交时真实运行结果(引擎 = mock,边界见第 4 节)。
 

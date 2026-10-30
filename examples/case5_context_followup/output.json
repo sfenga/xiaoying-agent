@@ -44,8 +44,7 @@
       "thought": "问题含指代词(「那…呢」),已合并对话历史主题词检索",
       "tool": "search",
       "params": {
-        "query": "交通 补贴 餐补",
-        "top_k": 4
+        "query": "交通 补贴 餐补"
       },
       "observation": {
         "tool": "search",

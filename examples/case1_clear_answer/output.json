@@ -30,8 +30,7 @@
       "thought": "先按问题主题词检索相关制度文档",
       "tool": "search",
       "params": {
-        "query": "补贴 餐补",
-        "top_k": 4
+        "query": "补贴 餐补"
       },
       "observation": {
         "tool": "search",

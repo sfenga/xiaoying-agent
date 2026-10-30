@@ -53,7 +53,7 @@ python -m src.kb_agent.cli chat
 python -m src.kb_agent.cli demo
 
 # ⑦ 全部测试(离线、约 4 秒,含检索召回评测与真实模型协议集成测试)
-python -m pytest tests/ -q        # 109 个用例
+python -m pytest tests/ -q        # 113 个用例
 
 # ⑧ 查看当前配置 / 渲染某个 Trace
 python -m src.kb_agent.cli doctor
@@ -72,7 +72,7 @@ python -m src.kb_agent.cli trace examples/case2_doc_conflict/output.json
 | [docs/04-ai-usage.md](docs/04-ai-usage.md) | AI 辅助范围、个人贡献与验证清单 |
 | [docs/05-retrospective.md](docs/05-retrospective.md) | 最难问题、学习收获、下一步 |
 | [examples/](examples/) | 7 组输入/实际输出/Trace(README.md 有索引表) |
-| [tests/](tests/) | 109 个可执行测试(6 验收点 + 引用逐字校验 + 内容替换敏感性 + 步数上限 + 检索召回评测集 + 黄金轨迹 + 真实模型协议端到端;CI 覆盖 py3.9–3.12 × Linux/Windows) |
+| [tests/](tests/) | 113 个可执行测试(6 验收点 + 引用逐字校验 + 内容替换敏感性 + 步数上限 + 检索召回评测集 + 黄金轨迹 + 真实模型协议端到端;CI 覆盖 py3.9–3.12 × Linux/Windows) |
 | [data/](data/) | 合成文档库(D01/D02 为考核指定的冲突实例)与检索规则 |
 | [docs/00-exam-brief.md](docs/00-exam-brief.md) | 考核题目原文备档 |
 
@@ -107,7 +107,7 @@ src/kb_agent/
   config.py       # 环境变量 + .env 加载
   cli.py          # ask / chat / demo / trace / doctor
 data/             # documents.json(8 篇合成文档)、rules.json(主题词/别名/同义词)
-tests/            # 109 个测试:6 验收点 + 引用完整性 + 内容替换 + 上限 + 检索评测 + 黄金轨迹 + 桩服务器集成
+tests/            # 113 个测试:6 验收点 + 引用完整性 + 内容替换 + 上限 + 检索评测 + 黄金轨迹 + 桩服务器集成
 examples/         # 7 组输入/输出/Trace + README 索引 + run_examples.py
 docs/             # 00 题目备档 + 01~05 考核要求的五份文档
 ```

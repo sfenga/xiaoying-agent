@@ -63,8 +63,7 @@
       "thought": "先按问题主题词检索相关制度文档",
       "tool": "search",
       "params": {
-        "query": "报销 期限",
-        "top_k": 4
+        "query": "报销 期限"
       },
       "observation": {
         "tool": "search",

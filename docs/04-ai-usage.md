@@ -8,14 +8,14 @@
 
 - 按考核题目要求搭建项目骨架(`src/`、`tests/`、`examples/`、`docs/`、`data/`);
 - 编写全部源代码:ReAct 循环(`agent.py`)、检索(`retrieval.py`、`textutils.py`)、工具与故障注入(`tools.py`)、真实模型接入(`llm.py`、`real_model.py`)、离线 Mock 策略(`mock_model.py`)、CLI(`cli.py`)、Trace 渲染(`trace.py`);
-- 编写合成数据(`data/documents.json` 含 D01/D02 冲突实例、`data/rules.json`)、109 个测试用例与 `examples/` 验证材料;
+- 编写合成数据(`data/documents.json` 含 D01/D02 冲突实例、`data/rules.json`)、113 个测试用例与 `examples/` 验证材料;
 - 起草 `docs/` 全部文档与本 README;
 - 第二轮增量:冲突确认收敛(用户指定文档直读)、检索召回评测集、真实模型协议端到端集成测试(本地桩服务器)、黄金轨迹测试、GitHub Actions CI。
 
 ## 2. 实际用时与完成度
 
 - **实际用时:约 2 小时**(第一轮 1 小时完成核心交付并双轴审查;第二轮 1 小时增量完善:冲突确认收敛闭环、检索召回评测集、真实模型协议端到端集成测试、黄金轨迹、CI;候选人可按实际情况修正);
-- **完成范围**:考核要求的核心链路全部完成 —— ReAct 决策循环、两个业务工具、6 个验收点全覆盖(另加"冲突确认收敛"延伸场景)、109 个可执行测试、7 组运行记录、五份考核文档、GitHub Actions CI(py3.9–3.12 × Linux/Windows);无未完成的核心项;
+- **完成范围**:考核要求的核心链路全部完成 —— ReAct 决策循环、两个业务工具、6 个验收点全覆盖(另加"冲突确认收敛"延伸场景)、113 个可执行测试、7 组运行记录、五份考核文档、GitHub Actions CI(py3.9–3.12 × Linux/Windows);无未完成的核心项;
 - **有意不做**(考核说明明确非必需):图形界面、线上部署、多 Agent、生产级 Runtime、向量数据库;
 - **边界项**:真实商用模型的提示词调优依赖模型凭据(协议路径已由桩服务器集成测试覆盖,见 docs/03-evaluation.md §4),属于如实标注的边界而非未完成项。
 
@@ -30,7 +30,7 @@
 **开发过程中已执行并通过的验证(可随时复跑)**:
 
 - [x] `pip install -r requirements.txt` 在干净 venv 中安装成功,随后测试全部通过;
-- [x] `python -m pytest tests/ -q`:109 passed(离线、约 4 秒);
+- [x] `python -m pytest tests/ -q`:113 passed(离线、约 4 秒);
 - [x] `python -m src.kb_agent.cli ask "报销申请的期限是多久?"` 输出 needs_confirmation,列出 D01/D02 双方原文并请求确认;
 - [x] `python -m src.kb_agent.cli demo` 重新生成的材料与仓库提交的 `examples/` 逐字节一致(diff 校验);
 - [x] README 第 3 节全部命令在干净 venv 中逐条执行通过(含管道喂入的多轮 chat);
