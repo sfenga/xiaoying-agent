@@ -1,7 +1,7 @@
 # examples/ 验证材料索引
 
 由 `python -m src.kb_agent.cli demo`(engine=mock, model=mock-policy-v1)生成;
-复现命令见仓库 README。以下 6 组输入/输出/Trace 覆盖全部 6 个验收点。
+复现命令见仓库 README。以下 7 组输入/输出/Trace 覆盖全部 6 个验收点及「冲突确认收敛」延伸场景。
 
 | 用例 | 验收点 | 问题 | 任务状态 | 步数 | 材料 |
 |------|--------|------|----------|------|------|

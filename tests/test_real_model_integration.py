@@ -27,6 +27,10 @@ def _make_server(responses):
 
     class Handler(BaseHTTPRequestHandler):
         def do_POST(self):
+            if self.path != "/chat/completions":  # 协议校验:只接受 chat/completions 端点
+                self.send_response(404)
+                self.end_headers()
+                return
             length = int(self.headers.get("Content-Length", 0))
             log["requests"].append(json.loads(self.rfile.read(length)))
             log["auth"].append(self.headers.get("Authorization", ""))

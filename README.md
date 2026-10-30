@@ -49,7 +49,7 @@ python -m src.kb_agent.cli ask "报销申请的期限是多久?" --inject read_o
 # ⑤ 多轮对话(演示上下文追问:先问餐补,再问「那上下班路上的呢?」)
 python -m src.kb_agent.cli chat
 
-# ⑥ 一键生成全部 6 组验证材料(input/output/trace,写入 examples/)
+# ⑥ 一键生成全部 7 组验证材料(input/output/trace,写入 examples/)
 python -m src.kb_agent.cli demo
 
 # ⑦ 全部测试(离线、约 4 秒,含检索召回评测与真实模型协议集成测试)
@@ -71,7 +71,7 @@ python -m src.kb_agent.cli trace examples/case2_doc_conflict/output.json
 | [docs/03-evaluation.md](docs/03-evaluation.md) | **验收点 × 测试 × 示例材料对照表**、实际结果、已知限制 |
 | [docs/04-ai-usage.md](docs/04-ai-usage.md) | AI 辅助范围、个人贡献与验证清单 |
 | [docs/05-retrospective.md](docs/05-retrospective.md) | 最难问题、学习收获、下一步 |
-| [examples/](examples/) | 6 组输入/实际输出/Trace(README.md 有索引表) |
+| [examples/](examples/) | 7 组输入/实际输出/Trace(README.md 有索引表) |
 | [tests/](tests/) | 109 个可执行测试(6 验收点 + 引用逐字校验 + 内容替换敏感性 + 步数上限 + 检索召回评测集 + 黄金轨迹 + 真实模型协议端到端;CI 覆盖 py3.9–3.12 × Linux/Windows) |
 | [data/](data/) | 合成文档库(D01/D02 为考核指定的冲突实例)与检索规则 |
 | [docs/00-exam-brief.md](docs/00-exam-brief.md) | 考核题目原文备档 |

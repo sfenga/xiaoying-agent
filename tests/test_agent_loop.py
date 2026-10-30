@@ -140,10 +140,21 @@ def test_conflict_resolved_by_explicit_doc(agent):
 def test_followup_new_topic_on_confirmed_doc(agent):
     """确认制度版本后的新主题追问:新主题接管,答案引用指定文档中的对应条款。"""
     r1 = agent.run("报销申请的期限是多久?")
-    r2 = agent.run("按 D01 算,那交通补贴呢?", history=make_history(r1))
+    r2 = agent.run("按D01算,那住宿费标准呢?", history=make_history(r1))
     assert r2.status == "answered"
-    assert "200" in r2.answer
+    assert "500 元" in r2.answer
     assert [c.doc_id for c in r2.citations] == ["D01"]
+    assert r2.trace[0].tool == "read"  # 中文语境直读同样生效
+
+
+def test_followup_topic_absent_in_confirmed_doc_asks_clarification(agent):
+    """确认文档中根本没有新主题的条款 → 如实澄清,不拿无关条款充数。"""
+    r1 = agent.run("报销申请的期限是多久?")
+    r2 = agent.run("按 D01 算,那年假有几天?", history=make_history(r1))
+    assert r2.status == "clarification_needed"
+    assert r2.citations == []  # 不用 D01 的无关条款答年假问题
+    assert any("年假" in g for g in r2.gaps)
+    assert r2.next_question_to_user
 
 
 def test_doc_ref_not_in_history_falls_back_to_search(agent):

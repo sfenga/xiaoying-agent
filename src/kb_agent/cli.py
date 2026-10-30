@@ -4,7 +4,7 @@
   python -m src.kb_agent.cli ask "每个月吃饭有补贴吗?能补多少?"
   python -m src.kb_agent.cli ask "报销申请的期限是多久?" --inject read_once
   python -m src.kb_agent.cli chat                 # 多轮对话(演示上下文追问)
-  python -m src.kb_agent.cli demo                 # 生成 examples/ 下全部 6 组验证材料
+  python -m src.kb_agent.cli demo                 # 生成 examples/ 下全部 7 组验证材料
   python -m src.kb_agent.cli doctor               # 查看当前生效配置
   python -m src.kb_agent.cli trace examples/case2_doc_conflict/output.json
 """
@@ -295,7 +295,7 @@ def cmd_demo(args: argparse.Namespace) -> int:
         "# examples/ 验证材料索引",
         "",
         f"由 `python -m src.kb_agent.cli demo`(engine={cfg.engine}, model={rows[0][1].model if rows else '-'})生成;",
-        "复现命令见仓库 README。以下 6 组输入/输出/Trace 覆盖全部 6 个验收点。",
+        "复现命令见仓库 README。以下 7 组输入/输出/Trace 覆盖全部 6 个验收点及「冲突确认收敛」延伸场景。",
         "",
         "| 用例 | 验收点 | 问题 | 任务状态 | 步数 | 材料 |",
         "|------|--------|------|----------|------|------|",

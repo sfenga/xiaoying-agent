@@ -231,6 +231,27 @@ class MockReActModel:
                 topics=raw,
             )
 
+        # -- 追问引入了新主题,但命中文档条款与新主题(含同义词)毫无交集 → 如实澄清,不答非所问 --
+        q_expanded = list(q_raw)
+        for t in q_raw:
+            for s in self.rules.get("synonyms", {}).get(t, []):
+                if s not in q_expanded:
+                    q_expanded.append(s)
+        if primary and q_expanded and (
+            count_distinct_terms(primary["heading"], q_expanded) == 0
+            and count_distinct_terms(primary["quote"], q_expanded) == 0
+        ):
+            topic = "、".join(q_raw)
+            return self._finish(
+                status="clarification_needed",
+                thought="指定文档中未见与新主题相关的条款,如实澄清而非引用无关条款作答",
+                answer=None,
+                citations=[],
+                gaps=[f"文档 {primary['doc_id']} 中未找到与「{topic}」相关的条款"],
+                next_q=f"「{topic}」可能记录在其他文档中,请指定文档编号(如已知),或换个说法再问。",
+                topics=raw,
+            )
+
         # -- 单一数值证据:取与问题最相关的条款回答 --
         if options:
             best = max(options.values(), key=lambda o: (o.get("score", 0), o["doc_id"]))
@@ -403,12 +424,14 @@ class MockReActModel:
         return count_distinct_terms(heading, raw_terms) > 0
 
     def _explicit_doc_ref(self, question: str, history: List[HistoryTurn], attempted: set) -> Optional[str]:
-        """识别追问中指定的文档编号(如「按 D01」);须出现在历史引用中(可校验、防幻觉),
-        且本轮尚未读过(已读过则进入证据汇总,避免重复读取)。"""
+        """识别追问中指定的文档编号(如「按 D01」「按D01算」);须出现在历史引用中(可校验、防幻觉),
+        且本轮尚未读过(已读过则进入证据汇总,避免重复读取)。
+
+        注意:中文与字母同属 \\w,\\b 词边界在中文语境失效,须用显式 lookaround 断言。"""
         if not history:
             return None
         known = {d for t in history for d in t.cited_doc_ids}
-        for match in re.findall(r"(?i)\bd\d+\b", question):
+        for match in re.findall(r"(?i)(?<![A-Za-z0-9])d\d+(?![A-Za-z0-9])", question):
             ref = match.upper()
             if ref in known and ref not in attempted:
                 return ref
