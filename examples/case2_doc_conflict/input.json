@@ -1,0 +1,13 @@
+{
+  "case_id": "case2_doc_conflict",
+  "title": "文档冲突:报销期限 30 天 vs 15 天,列出冲突并请求确认",
+  "acceptance_point": "文档冲突",
+  "engine": "mock",
+  "model": "mock-policy-v1",
+  "max_steps": 8,
+  "inject_failure": "",
+  "question": "报销申请的期限是多久?",
+  "turn1_question": null,
+  "history": [],
+  "data_path": "data/documents.json"
+}

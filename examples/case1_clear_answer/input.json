@@ -1,0 +1,13 @@
+{
+  "case_id": "case1_clear_answer",
+  "title": "明确答案:依据文档回答补贴问题",
+  "acceptance_point": "明确答案",
+  "engine": "mock",
+  "model": "mock-policy-v1",
+  "max_steps": 8,
+  "inject_failure": "",
+  "question": "每个月吃饭有补贴吗?能补多少?",
+  "turn1_question": null,
+  "history": [],
+  "data_path": "data/documents.json"
+}

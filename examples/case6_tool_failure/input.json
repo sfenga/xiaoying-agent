@@ -1,0 +1,13 @@
+{
+  "case_id": "case6_tool_failure",
+  "title": "工具失败:读取文档故障后改用其他证据恢复",
+  "acceptance_point": "工具失败",
+  "engine": "mock",
+  "model": "mock-policy-v1",
+  "max_steps": 8,
+  "inject_failure": "read_once",
+  "question": "报销申请的期限是多久?",
+  "turn1_question": null,
+  "history": [],
+  "data_path": "data/documents.json"
+}

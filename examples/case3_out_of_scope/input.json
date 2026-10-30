@@ -1,0 +1,13 @@
+{
+  "case_id": "case3_out_of_scope",
+  "title": "资料外问题:改写检索后仍无命中,如实说明缺口",
+  "acceptance_point": "资料外问题",
+  "engine": "mock",
+  "model": "mock-policy-v1",
+  "max_steps": 8,
+  "inject_failure": "",
+  "question": "公司附近有什么好吃的餐厅推荐?",
+  "turn1_question": null,
+  "history": [],
+  "data_path": "data/documents.json"
+}

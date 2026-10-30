@@ -1,0 +1,178 @@
+{
+  "question": "每个月吃饭有补贴吗?能补多少?",
+  "status": "answered",
+  "answer": "工作日午餐补贴为每月 300 元,随当月工资发放; 结论:300 元。",
+  "citations": [
+    {
+      "doc_id": "D04",
+      "title": "员工福利与补贴常见问题",
+      "version_date": "2024-09-10",
+      "section": "餐补",
+      "quote": "工作日午餐补贴为每月 300 元,随当月工资发放;"
+    }
+  ],
+  "conflicts": [],
+  "gaps": [],
+  "next_question_to_user": null,
+  "topics": [
+    "补贴",
+    "餐补"
+  ],
+  "steps_used": 3,
+  "max_steps": 8,
+  "limit_reached": false,
+  "engine": "mock",
+  "model": "mock-policy-v1",
+  "history": [],
+  "trace": [
+    {
+      "step": 1,
+      "thought": "先按问题主题词检索相关制度文档",
+      "tool": "search",
+      "params": {
+        "query": "补贴 餐补",
+        "top_k": 4
+      },
+      "observation": {
+        "tool": "search",
+        "params": {
+          "query": "补贴 餐补",
+          "top_k": 4
+        },
+        "ok": true,
+        "summary": "检索「补贴 餐补」命中 3 条片段(涉及文档: D04)",
+        "data": {
+          "query": "补贴 餐补",
+          "terms": [
+            "补贴",
+            "餐补"
+          ],
+          "hits": [
+            {
+              "doc_id": "D04",
+              "title": "员工福利与补贴常见问题",
+              "version_date": "2024-09-10",
+              "applies_to": "全体正式员工",
+              "heading": "餐补",
+              "score": 56.714,
+              "snippet": "工作日午餐补贴为每月 300 元,随当月工资发放;"
+            },
+            {
+              "doc_id": "D04",
+              "title": "员工福利与补贴常见问题",
+              "version_date": "2024-09-10",
+              "applies_to": "全体正式员工",
+              "heading": "交通补贴",
+              "score": 35.192,
+              "snippet": "上下班交通补贴为每月 200 元,仅限正式员工享受。"
+            },
+            {
+              "doc_id": "D04",
+              "title": "员工福利与补贴常见问题",
+              "version_date": "2024-09-10",
+              "applies_to": "全体正式员工",
+              "heading": "高温补贴",
+              "score": 33.391,
+              "snippet": "每年 6 月至 9 月,室外作业岗位发放高温补贴,标准为每月 150 元。"
+            }
+          ]
+        },
+        "error": null
+      },
+      "next_action": "read {\"doc_id\": \"D04\"}"
+    },
+    {
+      "step": 2,
+      "thought": "检索命中 3 条,优先读取最相关文档 D04 的原文核实",
+      "tool": "read",
+      "params": {
+        "doc_id": "D04"
+      },
+      "observation": {
+        "tool": "read",
+        "params": {
+          "doc_id": "D04",
+          "section": null
+        },
+        "ok": true,
+        "summary": "读取 D04《员工福利与补贴常见问题》(v2024-09-10) 共 3 节: 餐补、交通补贴、高温补贴",
+        "data": {
+          "doc": {
+            "doc_id": "D04",
+            "title": "员工福利与补贴常见问题",
+            "version_date": "2024-09-10",
+            "applies_to": "全体正式员工"
+          },
+          "requested_section": null,
+          "sections": [
+            {
+              "heading": "餐补",
+              "text": "工作日午餐补贴为每月 300 元,随当月工资发放;出差当天不再重复享受餐补。"
+            },
+            {
+              "heading": "交通补贴",
+              "text": "上下班交通补贴为每月 200 元,仅限正式员工享受。"
+            },
+            {
+              "heading": "高温补贴",
+              "text": "每年 6 月至 9 月,室外作业岗位发放高温补贴,标准为每月 150 元。"
+            }
+          ]
+        },
+        "error": null
+      },
+      "next_action": "finish(给出最终交付,循环结束)"
+    },
+    {
+      "step": 3,
+      "thought": "已从文档中找到对应数值条款,引用原文作答",
+      "tool": "finish",
+      "params": {
+        "status": "answered",
+        "answer": "工作日午餐补贴为每月 300 元,随当月工资发放; 结论:300 元。",
+        "citations": [
+          {
+            "doc_id": "D04",
+            "section": "餐补",
+            "quote": "工作日午餐补贴为每月 300 元,随当月工资发放;"
+          }
+        ],
+        "conflicts": [],
+        "gaps": [],
+        "next_question_to_user": null,
+        "topics": [
+          "补贴",
+          "餐补"
+        ]
+      },
+      "observation": {
+        "tool": "finish",
+        "params": {
+          "status": "answered",
+          "answer": "工作日午餐补贴为每月 300 元,随当月工资发放; 结论:300 元。",
+          "citations": [
+            {
+              "doc_id": "D04",
+              "section": "餐补",
+              "quote": "工作日午餐补贴为每月 300 元,随当月工资发放;"
+            }
+          ],
+          "conflicts": [],
+          "gaps": [],
+          "next_question_to_user": null,
+          "topics": [
+            "补贴",
+            "餐补"
+          ]
+        },
+        "ok": true,
+        "summary": "最终交付: status=answered,引用 1 条,冲突 0 组,缺口 0 项",
+        "data": null,
+        "error": null
+      },
+      "next_action": "(结束)"
+    }
+  ],
+  "dropped_citations": [],
+  "notes": []
+}

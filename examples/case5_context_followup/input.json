@@ -1,0 +1,38 @@
+{
+  "case_id": "case5_context_followup",
+  "title": "上下文追问:结合上一轮主题理解「那上下班路上的呢?」",
+  "acceptance_point": "上下文追问",
+  "engine": "mock",
+  "model": "mock-policy-v1",
+  "max_steps": 8,
+  "inject_failure": "",
+  "question": "那上下班路上的呢?",
+  "turn1_question": "每个月吃饭有补贴吗?能补多少?",
+  "history": [
+    {
+      "question": "每个月吃饭有补贴吗?能补多少?",
+      "answer": "工作日午餐补贴为每月 300 元,随当月工资发放; 结论:300 元。",
+      "status": "answered",
+      "cited_doc_ids": [
+        "D04"
+      ],
+      "topics": [
+        "补贴",
+        "餐补"
+      ]
+    }
+  ],
+  "data_path": "data/documents.json",
+  "turn1_output": {
+    "status": "answered",
+    "answer": "工作日午餐补贴为每月 300 元,随当月工资发放; 结论:300 元。",
+    "citations": [
+      {
+        "doc_id": "D04",
+        "version_date": "2024-09-10",
+        "section": "餐补",
+        "quote": "工作日午餐补贴为每月 300 元,随当月工资发放;"
+      }
+    ]
+  }
+}

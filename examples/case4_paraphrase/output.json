@@ -1,0 +1,185 @@
+{
+  "question": "工作满一年能休几天假?",
+  "status": "answered",
+  "answer": "员工累计工作满 1 年不满 10 年的,年休假 5 天; 结论:5 天。",
+  "citations": [
+    {
+      "doc_id": "D03",
+      "title": "考勤与休假管理制度",
+      "version_date": "2024-03-01",
+      "section": "年休假天数",
+      "quote": "员工累计工作满 1 年不满 10 年的,年休假 5 天;"
+    }
+  ],
+  "conflicts": [],
+  "gaps": [],
+  "next_question_to_user": null,
+  "topics": [
+    "年假"
+  ],
+  "steps_used": 4,
+  "max_steps": 8,
+  "limit_reached": false,
+  "engine": "mock",
+  "model": "mock-policy-v1",
+  "history": [],
+  "trace": [
+    {
+      "step": 1,
+      "thought": "先按问题主题词检索相关制度文档",
+      "tool": "search",
+      "params": {
+        "query": "年假",
+        "top_k": 4
+      },
+      "observation": {
+        "tool": "search",
+        "params": {
+          "query": "年假",
+          "top_k": 4
+        },
+        "ok": true,
+        "summary": "检索「年假」命中 0 条片段(无相关文档)",
+        "data": {
+          "query": "年假",
+          "terms": [
+            "年假"
+          ],
+          "hits": []
+        },
+        "error": null
+      },
+      "next_action": "search {\"query\": \"年假 年休假 带薪年假\", \"top_k\": 4}"
+    },
+    {
+      "step": 2,
+      "thought": "检索无结果,使用同义词扩展改写查询后重试",
+      "tool": "search",
+      "params": {
+        "query": "年假 年休假 带薪年假",
+        "top_k": 4
+      },
+      "observation": {
+        "tool": "search",
+        "params": {
+          "query": "年假 年休假 带薪年假",
+          "top_k": 4
+        },
+        "ok": true,
+        "summary": "检索「年假 年休假 带薪年假」命中 1 条片段(涉及文档: D03)",
+        "data": {
+          "query": "年假 年休假 带薪年假",
+          "terms": [
+            "年假",
+            "年休假",
+            "带薪年假"
+          ],
+          "hits": [
+            {
+              "doc_id": "D03",
+              "title": "考勤与休假管理制度",
+              "version_date": "2024-03-01",
+              "applies_to": "全体正式员工",
+              "heading": "年休假天数",
+              "score": 32.961,
+              "snippet": "员工累计工作满 1 年不满 10 年的,年休假 5 天;"
+            }
+          ]
+        },
+        "error": null
+      },
+      "next_action": "read {\"doc_id\": \"D03\"}"
+    },
+    {
+      "step": 3,
+      "thought": "检索命中 1 条,优先读取最相关文档 D03 的原文核实",
+      "tool": "read",
+      "params": {
+        "doc_id": "D03"
+      },
+      "observation": {
+        "tool": "read",
+        "params": {
+          "doc_id": "D03",
+          "section": null
+        },
+        "ok": true,
+        "summary": "读取 D03《考勤与休假管理制度》(v2024-03-01) 共 3 节: 年休假天数、迟到处理、忘打卡补卡",
+        "data": {
+          "doc": {
+            "doc_id": "D03",
+            "title": "考勤与休假管理制度",
+            "version_date": "2024-03-01",
+            "applies_to": "全体正式员工"
+          },
+          "requested_section": null,
+          "sections": [
+            {
+              "heading": "年休假天数",
+              "text": "员工累计工作满 1 年不满 10 年的,年休假 5 天;满 10 年不满 20 年的,年休假 10 天;满 20 年的,年休假 15 天。"
+            },
+            {
+              "heading": "迟到处理",
+              "text": "当月迟到 3 次以内不作处理,超过 3 次的,每次扣款 50 元。"
+            },
+            {
+              "heading": "忘打卡补卡",
+              "text": "每月最多可补卡 2 次,补卡须由直属上级审批。"
+            }
+          ]
+        },
+        "error": null
+      },
+      "next_action": "finish(给出最终交付,循环结束)"
+    },
+    {
+      "step": 4,
+      "thought": "已从文档中找到对应数值条款,引用原文作答",
+      "tool": "finish",
+      "params": {
+        "status": "answered",
+        "answer": "员工累计工作满 1 年不满 10 年的,年休假 5 天; 结论:5 天。",
+        "citations": [
+          {
+            "doc_id": "D03",
+            "section": "年休假天数",
+            "quote": "员工累计工作满 1 年不满 10 年的,年休假 5 天;"
+          }
+        ],
+        "conflicts": [],
+        "gaps": [],
+        "next_question_to_user": null,
+        "topics": [
+          "年假"
+        ]
+      },
+      "observation": {
+        "tool": "finish",
+        "params": {
+          "status": "answered",
+          "answer": "员工累计工作满 1 年不满 10 年的,年休假 5 天; 结论:5 天。",
+          "citations": [
+            {
+              "doc_id": "D03",
+              "section": "年休假天数",
+              "quote": "员工累计工作满 1 年不满 10 年的,年休假 5 天;"
+            }
+          ],
+          "conflicts": [],
+          "gaps": [],
+          "next_question_to_user": null,
+          "topics": [
+            "年假"
+          ]
+        },
+        "ok": true,
+        "summary": "最终交付: status=answered,引用 1 条,冲突 0 组,缺口 0 项",
+        "data": null,
+        "error": null
+      },
+      "next_action": "(结束)"
+    }
+  ],
+  "dropped_citations": [],
+  "notes": []
+}

@@ -1,0 +1,13 @@
+{
+  "case_id": "case4_paraphrase",
+  "title": "改写后的相似问题:口语化问年假天数(经同义词改写后命中)",
+  "acceptance_point": "改写后的相似问题",
+  "engine": "mock",
+  "model": "mock-policy-v1",
+  "max_steps": 8,
+  "inject_failure": "",
+  "question": "工作满一年能休几天假?",
+  "turn1_question": null,
+  "history": [],
+  "data_path": "data/documents.json"
+}

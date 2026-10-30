@@ -1,0 +1,123 @@
+{
+  "question": "公司附近有什么好吃的餐厅推荐?",
+  "status": "out_of_scope",
+  "answer": null,
+  "citations": [],
+  "conflicts": [],
+  "gaps": [
+    "当前文档库未收录与问题「公司附近有什么好吃的餐厅推荐?」相关的制度或 FAQ",
+    "已尝试的查询:「餐厅」、「餐厅 食堂 餐饮 吃饭」"
+  ],
+  "next_question_to_user": null,
+  "topics": [
+    "餐厅"
+  ],
+  "steps_used": 3,
+  "max_steps": 8,
+  "limit_reached": false,
+  "engine": "mock",
+  "model": "mock-policy-v1",
+  "history": [],
+  "trace": [
+    {
+      "step": 1,
+      "thought": "先按问题主题词检索相关制度文档",
+      "tool": "search",
+      "params": {
+        "query": "餐厅",
+        "top_k": 4
+      },
+      "observation": {
+        "tool": "search",
+        "params": {
+          "query": "餐厅",
+          "top_k": 4
+        },
+        "ok": true,
+        "summary": "检索「餐厅」命中 0 条片段(无相关文档)",
+        "data": {
+          "query": "餐厅",
+          "terms": [
+            "餐厅"
+          ],
+          "hits": []
+        },
+        "error": null
+      },
+      "next_action": "search {\"query\": \"餐厅 食堂 餐饮 吃饭\", \"top_k\": 4}"
+    },
+    {
+      "step": 2,
+      "thought": "检索无结果,使用同义词扩展改写查询后重试",
+      "tool": "search",
+      "params": {
+        "query": "餐厅 食堂 餐饮 吃饭",
+        "top_k": 4
+      },
+      "observation": {
+        "tool": "search",
+        "params": {
+          "query": "餐厅 食堂 餐饮 吃饭",
+          "top_k": 4
+        },
+        "ok": true,
+        "summary": "检索「餐厅 食堂 餐饮 吃饭」命中 0 条片段(无相关文档)",
+        "data": {
+          "query": "餐厅 食堂 餐饮 吃饭",
+          "terms": [
+            "餐厅",
+            "食堂",
+            "餐饮",
+            "吃饭"
+          ],
+          "hits": []
+        },
+        "error": null
+      },
+      "next_action": "finish(给出最终交付,循环结束)"
+    },
+    {
+      "step": 3,
+      "thought": "改写检索后仍无命中,如实告知超出资料范围",
+      "tool": "finish",
+      "params": {
+        "status": "out_of_scope",
+        "answer": null,
+        "citations": [],
+        "conflicts": [],
+        "gaps": [
+          "当前文档库未收录与问题「公司附近有什么好吃的餐厅推荐?」相关的制度或 FAQ",
+          "已尝试的查询:「餐厅」、「餐厅 食堂 餐饮 吃饭」"
+        ],
+        "next_question_to_user": null,
+        "topics": [
+          "餐厅"
+        ]
+      },
+      "observation": {
+        "tool": "finish",
+        "params": {
+          "status": "out_of_scope",
+          "answer": null,
+          "citations": [],
+          "conflicts": [],
+          "gaps": [
+            "当前文档库未收录与问题「公司附近有什么好吃的餐厅推荐?」相关的制度或 FAQ",
+            "已尝试的查询:「餐厅」、「餐厅 食堂 餐饮 吃饭」"
+          ],
+          "next_question_to_user": null,
+          "topics": [
+            "餐厅"
+          ]
+        },
+        "ok": true,
+        "summary": "最终交付: status=out_of_scope,引用 0 条,冲突 0 组,缺口 2 项",
+        "data": null,
+        "error": null
+      },
+      "next_action": "(结束)"
+    }
+  ],
+  "dropped_citations": [],
+  "notes": []
+}
