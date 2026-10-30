@@ -11,6 +11,7 @@
 | case4_paraphrase | 改写后的相似问题 | 工作满一年能休几天假? | `answered` | 4 | [case4_paraphrase/](case4_paraphrase/) |
 | case5_context_followup | 上下文追问 | 那上下班路上的呢? | `answered` | 3 | [case5_context_followup/](case5_context_followup/) |
 | case6_tool_failure | 工具失败 | 报销申请的期限是多久? | `needs_confirmation` | 4 | [case6_tool_failure/](case6_tool_failure/) |
+| case7_conflict_resolved | 文档冲突(确认后收敛) | 按 D01 的规定算 | `answered` | 2 | [case7_conflict_resolved/](case7_conflict_resolved/) |
 
 > 说明:若引擎为 mock,以下 Trace 仅验证流程与工具链路,不证明真实模型决策效果;
 配置 AGENT_LLM_* 后重跑 `demo` 即可用真实模型生成同等材料。

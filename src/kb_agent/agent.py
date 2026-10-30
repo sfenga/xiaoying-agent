@@ -211,9 +211,11 @@ class ReActAgent:
     # finish 参数校验与引用核验
     # ------------------------------------------------------------------ #
     def _build_final(self, params: Dict[str, Any]) -> Tuple[Optional[Dict[str, Any]], str]:
-        """返回 (最终交付 dict, 摘要/错误说明)。final 为 None 表示校验未通过。"""
-        self._dropped = []
-        self._notes = []
+        """返回 (最终交付 dict, 摘要/错误说明)。final 为 None 表示校验未通过。
+
+        注意:同一 run 内可能被多次调用(finish 校验失败后的重试),
+        _dropped/_notes 只在 run() 开始时重置,以便累积记录每次校验的剔除项。
+        """
         status = str(params.get("status", "")).strip()
         if status not in ALL_STATUSES:
             return None, f"status 非法: {status!r},必须是 {' / '.join(ALL_STATUSES)}"
@@ -229,9 +231,9 @@ class ReActAgent:
         next_q = next_q.strip() if isinstance(next_q, str) else None
         topics = [str(t) for t in (params.get("topics") or []) if str(t).strip()]
 
-        # 状态级约束:防止"有依据却不给引用"或"说冲突却拿不出证据"
-        if status == STATUS_ANSWERED and not answer and not citations:
-            return None, "status=answered 需要提供 answer 或至少一条可核验引用"
+        # 状态级约束:回答必须有可核验依据;冲突/资料外必须说明
+        if status == STATUS_ANSWERED and not citations:
+            return None, "status=answered 需要至少一条可核验引用(逐字原文);无文档依据请改用 out_of_scope 或 clarification_needed"
         if status == STATUS_NEEDS_CONFIRMATION and not conflicts and not next_q:
             return None, "status=needs_confirmation 需要提供 conflicts 或 next_question_to_user"
         if status == STATUS_OUT_OF_SCOPE and not gaps:

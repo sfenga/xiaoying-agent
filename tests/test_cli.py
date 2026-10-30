@@ -66,7 +66,7 @@ def test_demo_generates_all_cases(tmp_path, capsys):
     code = main(["demo", "--outdir", str(outdir), "--engine", "mock"])
     assert code == 0
     case_dirs = sorted(d.name for d in outdir.iterdir() if d.is_dir())
-    assert len(case_dirs) == 6
+    assert len(case_dirs) == 7
     for name in case_dirs:
         d = outdir / name
         assert (d / "input.json").is_file()

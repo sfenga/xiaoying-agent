@@ -13,6 +13,7 @@
 """
 from __future__ import annotations
 
+import re
 from typing import Any, Dict, List, Optional
 
 from .retrieval import expand_terms
@@ -55,6 +56,7 @@ class MockReActModel:
         topics = self._history_topics(history)
         raw, expanded = expand_terms(question, topics, self.rules)
         q_raw, _ = expand_terms(question, [], self.rules)
+        hist_terms = [t for t in raw if t not in q_raw]  # 对话历史携带的主题词(打分权重低于新主题)
         multi_aspect = len(q_raw) >= 2  # 问题本身含多个主题词(如「出差住宿费标准」)→ 需覆盖多个方面
 
         searches = [s for s in steps if s.tool == TOOL_SEARCH]
@@ -64,8 +66,27 @@ class MockReActModel:
         failed_reads = [s for s in reads if s.observation is not None and not s.observation.ok]
         followup = _is_followup(question) and bool(history)
 
-        # -- 1. 尚无成功检索:发起首轮(或对失败重试) --
-        if not ok_searches:
+        # -- 0. 用户在追问中指定了文档(如冲突场景确认「按 D01」)→ 直接读取,不再检索 --
+        attempted = {str(s.params.get("doc_id", "")) for s in reads}
+        doc_ref = self._explicit_doc_ref(question, history, attempted)
+        if doc_ref:
+            return self._read(
+                doc_ref,
+                f"用户在追问中指定了文档 {doc_ref},直接读取原文,结合对话历史主题定位条款",
+            )
+
+        last_hits: List[Dict[str, Any]] = []
+        if ok_searches:
+            last_hits = ok_searches[-1].observation.data.get("hits", [])  # type: ignore[union-attr]
+
+            # -- 2. 检索无结果:改写重试,仍无则 out_of_scope --
+            if not last_hits:
+                tried = [str(s.params.get("query", "")) for s in ok_searches]
+                if expanded != raw and " ".join(expanded) not in tried:
+                    return self._search(" ".join(expanded), "检索无结果,使用同义词扩展改写查询后重试")
+                return self._finish_out_of_scope(question, raw, tried)
+        elif not ok_reads:
+            # -- 1. 尚无成功检索:发起首轮(或对失败重试) --
             if searches:  # 有失败记录 → 换同义词扩展重试
                 return self._search(
                     " ".join(expanded) or question,
@@ -76,21 +97,12 @@ class MockReActModel:
             if followup:
                 thought = "问题含指代词(「那…呢」),已合并对话历史主题词检索"
             return self._search(query, thought)
-
-        last_hits: List[Dict[str, Any]] = ok_searches[-1].observation.data.get("hits", [])  # type: ignore[union-attr]
-
-        # -- 2. 检索无结果:改写重试,仍无则 out_of_scope --
-        if not last_hits:
-            tried = [str(s.params.get("query", "")) for s in ok_searches]
-            if expanded != raw and " ".join(expanded) not in tried:
-                return self._search(" ".join(expanded), "检索无结果,使用同义词扩展改写查询后重试")
-            return self._finish_out_of_scope(question, raw, tried)
+        # ok_searches 为空但 ok_reads 非空:用户指定文档直读后,直接进入证据汇总
 
         # -- 3. 有命中:读取最相关文档 --
-        attempted = {str(s.params.get("doc_id", "")) for s in reads}
         primary = None
         for r in ok_reads:
-            cand = self._extract_from_read(r, raw, question)
+            cand = self._extract_from_read(r, q_raw, hist_terms, question)
             if cand and (primary is None or cand["score"] > primary["score"]):
                 primary = cand
 
@@ -140,7 +152,7 @@ class MockReActModel:
                     return self._read(h["doc_id"], reason)
 
         # -- 4. 汇总所有证据做结束决策 --
-        return self._summarize(question, raw, last_hits, ok_reads, failed_reads, primary, attempted)
+        return self._summarize(question, raw, q_raw, last_hits, ok_reads, failed_reads, primary, attempted)
 
     # ------------------------------------------------------------------ #
     # 证据汇总与结束动作
@@ -149,6 +161,7 @@ class MockReActModel:
         self,
         question: str,
         raw: List[str],
+        q_raw: List[str],
         last_hits: List[Dict[str, Any]],
         ok_reads: List[TraceStep],
         failed_reads: List[TraceStep],
@@ -157,9 +170,10 @@ class MockReActModel:
     ) -> Dict[str, Any]:
         options: Dict[str, Dict[str, Any]] = {}   # doc_id -> 证据 option
         sentence_only: Dict[str, Dict[str, Any]] = {}
+        hist_terms = [t for t in raw if t not in q_raw]
 
         for r in ok_reads:
-            cand = self._extract_from_read(r, raw, question)
+            cand = self._extract_from_read(r, q_raw, hist_terms, question)
             if not cand:
                 continue
             entry = self._option_from_extract(cand, evidence="read")
@@ -186,7 +200,7 @@ class MockReActModel:
                 "quote": h["snippet"],
                 "value": snippet_value or "",
                 "evidence": "snippet",
-                "score": self._score_sentence(h["heading"], h["snippet"], raw, question),
+                "score": self._score_sentence(h["heading"], h["snippet"], q_raw, hist_terms, question),
             }
             if snippet_value:
                 options[doc_id] = entry
@@ -314,8 +328,14 @@ class MockReActModel:
     # ------------------------------------------------------------------ #
     # 证据提取
     # ------------------------------------------------------------------ #
-    def _extract_from_read(self, step: TraceStep, raw: List[str], question: str) -> Optional[Dict[str, Any]]:
-        """从 read 观察中提取与问题最相关的句子(及其数值)。"""
+    def _extract_from_read(
+        self, step: TraceStep, q_terms: List[str], hist_terms: List[str], question: str
+    ) -> Optional[Dict[str, Any]]:
+        """从 read 观察中提取与问题最相关的句子(及其数值)。
+
+        打分时问题自身的主题词权重高于对话历史携带的主题词,保证追问引入新主题时
+        答案跟随新主题而不是沿用上一轮。
+        """
         obs = step.observation
         if obs is None or not obs.ok or not obs.data:
             return None
@@ -325,7 +345,7 @@ class MockReActModel:
         for sec in sections:
             heading = str(sec.get("heading", ""))
             for sent in split_sentences(str(sec.get("text", ""))):
-                score = self._score_sentence(heading, sent, raw, question)
+                score = self._score_sentence(heading, sent, q_terms, hist_terms, question)
                 if best is None or score > best["score"]:
                     best = {
                         "doc_id": str(doc_meta.get("doc_id", "")),
@@ -350,12 +370,15 @@ class MockReActModel:
             "score": cand["score"],
         }
 
-    def _score_sentence(self, heading: str, sentence: str, raw: List[str], question: str) -> float:
-        """句子相关度:章节标题命中加权 2 倍 + 句子命中 + 与问题原文的 bigram 重叠做微调。"""
+    def _score_sentence(self, heading: str, sentence: str, q_terms: List[str], hist_terms: List[str], question: str) -> float:
+        """句子相关度:新主题词(问题自身)权重 3 倍,历史携带主题词权重 1 倍;
+        章节标题命中再乘 2;与问题原文的 bigram 重叠做微调。"""
         q_feats = set(bigram_counter(question))
         return (
-            2 * count_distinct_terms(heading, raw)
-            + count_distinct_terms(sentence, raw)
+            3 * count_distinct_terms(heading, q_terms)
+            + count_distinct_terms(heading, hist_terms)
+            + 3 * count_distinct_terms(sentence, q_terms)
+            + count_distinct_terms(sentence, hist_terms)
             + 0.01 * len(q_feats & set(bigram_counter(sentence)))
         )
 
@@ -378,6 +401,18 @@ class MockReActModel:
     def _heading_comparable(self, heading: str, raw_terms: List[str]) -> bool:
         """章节标题与问题主题词有交集才参与冲突比较,避免把不同福利误判为冲突。"""
         return count_distinct_terms(heading, raw_terms) > 0
+
+    def _explicit_doc_ref(self, question: str, history: List[HistoryTurn], attempted: set) -> Optional[str]:
+        """识别追问中指定的文档编号(如「按 D01」);须出现在历史引用中(可校验、防幻觉),
+        且本轮尚未读过(已读过则进入证据汇总,避免重复读取)。"""
+        if not history:
+            return None
+        known = {d for t in history for d in t.cited_doc_ids}
+        for match in re.findall(r"(?i)\bd\d+\b", question):
+            ref = match.upper()
+            if ref in known and ref not in attempted:
+                return ref
+        return None
 
     def _history_topics(self, history: List[HistoryTurn]) -> List[str]:
         topics: List[str] = []

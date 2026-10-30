@@ -125,6 +125,34 @@ def test_trace_records_next_action_chain(agent):
     assert r.trace[-1].next_action == "(结束)"
 
 
+def test_conflict_resolved_by_explicit_doc(agent):
+    """冲突场景闭环:用户确认制度版本后,直接读取指定文档作答,不再检索。"""
+    r1 = agent.run("报销申请的期限是多久?")
+    assert r1.status == "needs_confirmation"
+    r2 = agent.run("按 D01 的规定算", history=make_history(r1))
+    assert r2.status == "answered"
+    assert "30 天" in r2.answer
+    assert [c.doc_id for c in r2.citations] == ["D01"]
+    assert [s.tool for s in r2.trace] == ["read", "finish"]
+    assert "指定了文档" in r2.trace[0].thought
+
+
+def test_followup_new_topic_on_confirmed_doc(agent):
+    """确认制度版本后的新主题追问:新主题接管,答案引用指定文档中的对应条款。"""
+    r1 = agent.run("报销申请的期限是多久?")
+    r2 = agent.run("按 D01 算,那交通补贴呢?", history=make_history(r1))
+    assert r2.status == "answered"
+    assert "200" in r2.answer
+    assert [c.doc_id for c in r2.citations] == ["D01"]
+
+
+def test_doc_ref_not_in_history_falls_back_to_search(agent):
+    """引用了历史中未出现过的文档 → 不直读,走常规检索流程重新对齐证据。"""
+    r1 = agent.run("每个月吃饭有补贴吗?能补多少?")  # 历史引用只有 D04
+    r2 = agent.run("按 D99 算", history=make_history(r1))
+    assert r2.trace[0].tool == "search"  # 未采纳无效文档引用
+
+
 def test_engine_and_model_recorded(agent):
     r = agent.run("每个月吃饭有补贴吗?能补多少?")
     assert r.engine == "mock"

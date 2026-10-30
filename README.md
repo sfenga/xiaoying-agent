@@ -1,5 +1,7 @@
 # 企业知识问答 Agent(小影校招 AI Agent 开发岗 · 考核项目)
 
+![tests](https://github.com/sfenga/xiaoying-agent/actions/workflows/ci.yml/badge.svg)
+
 > **提交信息**:选题为考核**「企业知识问答 Agent」**题 | GitHub:https://github.com/sfenga/xiaoying-agent(私有仓库,已授权指定评审账号后可读)| 最终 commit SHA:**以本仓库最新提交为准**(评审按提交材料中所填 SHA 检出即为完整交付)。
 
 基于合成制度/FAQ 文档库的企业知识问答 Agent:**ReAct 决策循环**(模型选动作 → 执行工具 → 观察结果 → 模型调整下一步或结束)+ **文档检索/片段读取**两个工具,回答必须附**文档 ID、版本日期与逐字原文引用**;文档冲突时列冲突并请求确认,不擅自作答。
@@ -50,8 +52,8 @@ python -m src.kb_agent.cli chat
 # ⑥ 一键生成全部 6 组验证材料(input/output/trace,写入 examples/)
 python -m src.kb_agent.cli demo
 
-# ⑦ 全部测试(离线、约 2 秒)
-python -m pytest tests/ -q        # 76 个用例
+# ⑦ 全部测试(离线、约 4 秒,含检索召回评测与真实模型协议集成测试)
+python -m pytest tests/ -q        # 109 个用例
 
 # ⑧ 查看当前配置 / 渲染某个 Trace
 python -m src.kb_agent.cli doctor
@@ -70,7 +72,7 @@ python -m src.kb_agent.cli trace examples/case2_doc_conflict/output.json
 | [docs/04-ai-usage.md](docs/04-ai-usage.md) | AI 辅助范围、个人贡献与验证清单 |
 | [docs/05-retrospective.md](docs/05-retrospective.md) | 最难问题、学习收获、下一步 |
 | [examples/](examples/) | 6 组输入/实际输出/Trace(README.md 有索引表) |
-| [tests/](tests/) | 76 个可执行测试(含引用逐字校验、内容替换敏感性、步数上限、finish 校验自修正) |
+| [tests/](tests/) | 109 个可执行测试(6 验收点 + 引用逐字校验 + 内容替换敏感性 + 步数上限 + 检索召回评测集 + 黄金轨迹 + 真实模型协议端到端;CI 覆盖 py3.9–3.12 × Linux/Windows) |
 | [data/](data/) | 合成文档库(D01/D02 为考核指定的冲突实例)与检索规则 |
 | [docs/00-exam-brief.md](docs/00-exam-brief.md) | 考核题目原文备档 |
 
@@ -84,6 +86,7 @@ python -m src.kb_agent.cli trace examples/case2_doc_conflict/output.json
 | 改写相似问题 | `examples/case4_paraphrase/`(口语问年假 → 改写命中 D03) |
 | 上下文追问 | `examples/case5_context_followup/`(「那上下班路上的呢?」→ 交通补贴 200 元) |
 | 工具失败 | `examples/case6_tool_failure/`(读取故障 → 改用片段证据恢复并识别冲突) |
+| 冲突确认收敛 | `examples/case7_conflict_resolved/`(用户确认"按 D01"→ 直读指定文档作答 30 天) |
 
 **替换文档内容做审核**:评审可直接修改 `data/documents.json`(如把 D01 的"30 天"改为"45 天")后重跑上面的命令,答案与动作会随之改变;`tests/test_conflict.py::test_content_swap_*` 自动化了这一检查。也可用 `--data 自定义.json` 指向替换后的文档库。
 
@@ -104,8 +107,8 @@ src/kb_agent/
   config.py       # 环境变量 + .env 加载
   cli.py          # ask / chat / demo / trace / doctor
 data/             # documents.json(8 篇合成文档)、rules.json(主题词/别名/同义词)
-tests/            # 72 个测试:6 验收点 + 引用完整性 + 内容替换 + 上限 + CLI
-examples/         # 6 组输入/输出/Trace + README 索引 + run_examples.py
+tests/            # 109 个测试:6 验收点 + 引用完整性 + 内容替换 + 上限 + 检索评测 + 黄金轨迹 + 桩服务器集成
+examples/         # 7 组输入/输出/Trace + README 索引 + run_examples.py
 docs/             # 00 题目备档 + 01~05 考核要求的五份文档
 ```
 

@@ -218,6 +218,13 @@ DEMO_CASES: List[DemoCase] = [
         "报销申请的期限是多久?",
         inject="read_once",
     ),
+    DemoCase(
+        "case7_conflict_resolved",
+        "冲突确认收敛:用户确认制度版本后依指定文档作答",
+        "文档冲突(确认后收敛)",
+        "按 D01 的规定算",
+        turn1_question="报销申请的期限是多久?",
+    ),
 ]
 
 

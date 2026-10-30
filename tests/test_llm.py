@@ -45,7 +45,7 @@ def test_llm_unreachable_server_raises_llmerror():
         llm.chat("system", "user")
 
 
-def test_llm_http_error_raises():
+def test_llm_http_error_raises(monkeypatch):
     class FakeResp:
         status_code = 401
         text = '{"error": "bad key"}'
@@ -53,21 +53,15 @@ def test_llm_http_error_raises():
         def json(self):
             return {}
 
-    class FakeSession:
-        def post(self, *a, **k):
-            return FakeResp()
+    def fake_post(*args, **kwargs):
+        return FakeResp()
 
-    llm = OpenAICompatLLM("http://x", "k", "m", max_retries=0)
     import src.kb_agent.llm as llm_mod
 
-    llm_mod.requests.post = FakeSession().post  # monkey-patch 模块内 requests
-    try:
-        with pytest.raises(LLMError, match="401"):
-            llm.chat("s", "u")
-    finally:
-        import importlib
-
-        importlib.reload(llm_mod)
+    monkeypatch.setattr(llm_mod.requests, "post", fake_post)  # pytest 自动还原,不污染其他测试
+    llm = OpenAICompatLLM("http://x", "k", "m", max_retries=0)
+    with pytest.raises(LLMError, match="401"):
+        llm.chat("s", "u")
 
 
 # ---------------- 真实模型决策器 ----------------

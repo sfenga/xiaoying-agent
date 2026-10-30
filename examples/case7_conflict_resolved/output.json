@@ -1,0 +1,140 @@
+{
+  "question": "按 D01 的规定算",
+  "status": "answered",
+  "answer": "员工须在费用发生后 30 天内提交报销申请,逾期不予受理。 结论:30 天。",
+  "citations": [
+    {
+      "doc_id": "D01",
+      "title": "员工费用报销制度",
+      "version_date": "2023-01-15",
+      "section": "报销期限",
+      "quote": "员工须在费用发生后 30 天内提交报销申请,逾期不予受理。"
+    }
+  ],
+  "conflicts": [],
+  "gaps": [],
+  "next_question_to_user": null,
+  "topics": [
+    "报销",
+    "期限"
+  ],
+  "steps_used": 2,
+  "max_steps": 8,
+  "limit_reached": false,
+  "engine": "mock",
+  "model": "mock-policy-v1",
+  "history": [
+    {
+      "question": "报销申请的期限是多久?",
+      "answer": "不同文档对「报销、期限」的规定不一致:D01《员工费用报销制度》(v2023-01-15)为「30 天」;D02《报销管理办法(2024 年修订)》(v2024-06-01)为「15 天」。在你确认适用制度前,我无法给出单一结论。",
+      "status": "needs_confirmation",
+      "cited_doc_ids": [
+        "D01",
+        "D02"
+      ],
+      "topics": [
+        "报销",
+        "期限"
+      ]
+    }
+  ],
+  "trace": [
+    {
+      "step": 1,
+      "thought": "用户在追问中指定了文档 D01,直接读取原文,结合对话历史主题定位条款",
+      "tool": "read",
+      "params": {
+        "doc_id": "D01"
+      },
+      "observation": {
+        "tool": "read",
+        "params": {
+          "doc_id": "D01",
+          "section": null
+        },
+        "ok": true,
+        "summary": "读取 D01《员工费用报销制度》(v2023-01-15) 共 4 节: 报销范围与票据、报销期限、住宿费标准、市内交通费",
+        "data": {
+          "doc": {
+            "doc_id": "D01",
+            "title": "员工费用报销制度",
+            "version_date": "2023-01-15",
+            "applies_to": null
+          },
+          "requested_section": null,
+          "sections": [
+            {
+              "heading": "报销范围与票据",
+              "text": "本制度适用于员工因公发生的差旅、交通、业务招待等费用的报销。所有报销须提供合规发票原件,发票抬头须与报销人所在单位全称一致。"
+            },
+            {
+              "heading": "报销期限",
+              "text": "员工须在费用发生后 30 天内提交报销申请,逾期不予受理。"
+            },
+            {
+              "heading": "住宿费标准",
+              "text": "员工出差住宿费标准为:一线城市每晚不超过 500 元,其他城市每晚不超过 350 元。"
+            },
+            {
+              "heading": "市内交通费",
+              "text": "市内交通费凭有效票据实报销,单笔超过 200 元的须提前经部门负责人审批。"
+            }
+          ]
+        },
+        "error": null
+      },
+      "next_action": "finish(给出最终交付,循环结束)"
+    },
+    {
+      "step": 2,
+      "thought": "已从文档中找到对应数值条款,引用原文作答",
+      "tool": "finish",
+      "params": {
+        "status": "answered",
+        "answer": "员工须在费用发生后 30 天内提交报销申请,逾期不予受理。 结论:30 天。",
+        "citations": [
+          {
+            "doc_id": "D01",
+            "section": "报销期限",
+            "quote": "员工须在费用发生后 30 天内提交报销申请,逾期不予受理。"
+          }
+        ],
+        "conflicts": [],
+        "gaps": [],
+        "next_question_to_user": null,
+        "topics": [
+          "报销",
+          "期限"
+        ]
+      },
+      "observation": {
+        "tool": "finish",
+        "params": {
+          "status": "answered",
+          "answer": "员工须在费用发生后 30 天内提交报销申请,逾期不予受理。 结论:30 天。",
+          "citations": [
+            {
+              "doc_id": "D01",
+              "section": "报销期限",
+              "quote": "员工须在费用发生后 30 天内提交报销申请,逾期不予受理。"
+            }
+          ],
+          "conflicts": [],
+          "gaps": [],
+          "next_question_to_user": null,
+          "topics": [
+            "报销",
+            "期限"
+          ]
+        },
+        "ok": true,
+        "summary": "最终交付: status=answered,引用 1 条,冲突 0 组,缺口 0 项",
+        "data": null,
+        "error": null
+      },
+      "next_action": "(结束)"
+    }
+  ],
+  "dropped_citations": [],
+  "notes": []
+}
