@@ -221,7 +221,8 @@ class MockReActModel:
         # -- 冲突判定:同一单位下出现不同数值才算真冲突(不同单位=不同方面,不是冲突) --
         conflict_group = self._find_conflict_group(options)
         if conflict_group:
-            topic = "、".join(raw[:3]) if raw else question
+            # 冲突主题标签优先用本轮问题自身的主题词,避免混入历史携带话题
+            topic = "、".join(q_raw[:3]) if q_raw else ("、".join(raw[:3]) if raw else question)
             ordered = sorted(conflict_group, key=lambda o: o["doc_id"])
             conflict = {"topic": topic, "options": ordered}
             brief = ";".join(
