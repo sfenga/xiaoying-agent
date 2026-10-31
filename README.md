@@ -33,6 +33,8 @@ AGENT_LLM_MODEL=glm-4-flash
 
 ## 3. 运行(可复制的评审入口)
 
+> Windows 下也可直接双击仓库根目录的 `start_chat.bat`(多轮对话)、`ask.bat`(单轮,问题作参数)、`run_demo.bat`、`run_tests.bat`,脚本已自动处理 UTF-8 编码。
+
 ```bash
 # ① 冲突场景(考核参考实例):D01 写 30 天、D02 写 15 天 → 列冲突请求确认,不擅自作答
 python -m src.kb_agent.cli ask "报销申请的期限是多久?"
